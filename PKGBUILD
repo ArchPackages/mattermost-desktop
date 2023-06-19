@@ -7,7 +7,7 @@
 
 pkgname=mattermost-desktop
 pkgver=5.4.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
@@ -43,17 +43,13 @@ prepare() {
 	local _electronVersion="$(< "/usr/lib/$_electron/version")"
 	jq '	.devDependencies.electron = $electronVersion |
 		del(.devDependencies["electron-rebuild"]) |
-		del(.dependencies) |
 		.config.target = $electronVersion |
 		.config.runtime = $electronRuntime' \
 			--arg electronRuntime "$_electron" \
 			--arg electronVersion "$_electronVersion" \
 			package.json |
 		sponge package.json
-	sed -i \
-		-e '/postinstall/s/"node.* && /"/' \
-		-e '/package:/s/deb rpm//' \
-		package.json
+	sed -i -e '/package:/s/deb rpm//' package.json
 	npm $_npmargs install
 }
 
