@@ -7,7 +7,7 @@
 
 pkgname=mattermost-desktop
 pkgver=5.4.0
-pkgrel=2
+pkgrel=3
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
@@ -41,7 +41,9 @@ prepare() {
 	sed -i -e "s/git rev-parse --short HEAD/echo $pkgver/" webpack.config.base.js
 	sed -e "s/@ELECTRON@/$_electron/" "../$pkgname.sh" > "$pkgname.sh"
 	local _electronVersion="$(< "/usr/lib/$_electron/version")"
-	jq '	.devDependencies.electron = $electronVersion |
+	jq '	.linux["target"] = [ "dir" ]' electron-builder.json |
+		sponge electron-builder.json
+	jq '	.devDependencies["electron"] = $electronVersion |
 		del(.devDependencies["electron-rebuild"]) |
 		.config.target = $electronVersion |
 		.config.runtime = $electronRuntime' \
@@ -49,19 +51,21 @@ prepare() {
 			--arg electronVersion "$_electronVersion" \
 			package.json |
 		sponge package.json
-	sed -i -e '/package:/s/deb rpm//' package.json
+	sed -i -e '/package:/s/tar.gz deb rpm/dir/' package.json
 	npm $_npmargs install
 }
 
 build() {
 	cd "$_archive"
-	npm $_npmargs --offline run build:main
+	export NODE_ENV=production
+	npm $_npmargs --offline run build
 	npm $_npmargs --offline run package:linux-all-x64
 }
 
 package() {
 	cd "$_archive"
-	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux*unpacked/resources/app.asar
+	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-unpacked/resources/app.asar
+	cp -a release/linux-unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" LICENSE.txt
 	install -Dm0644 src/assets/linux/app_icon.png "$pkgdir/usr/share/icons/$pkgname.png"
 	install -Dm0755 "$pkgname.sh" "$pkgdir/usr/bin/$pkgname"
