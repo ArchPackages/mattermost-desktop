@@ -12,7 +12,7 @@ pkgrel=1
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
-license=(Apache)
+license=(Apache-2.0)
 _electron=electron27
 depends=($_electron
          libxcrypt-compat)
