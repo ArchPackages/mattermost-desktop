@@ -63,13 +63,13 @@ build() {
 	cd "$_archive"
 	export NODE_ENV=production
 	npm $_npmargs --offline run build-prod
-	npm $_npmargs --offline run package:linux:arch-x64 -- tar.gz --x64 --publish=never
+	npx electron-builder --linux dir --publish=never
 }
 
 package() {
 	cd "$_archive"
-	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-unpacked/resources/app.asar
-	cp -a release/linux-unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
+	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-*unpacked/resources/app.asar
+	cp -a release/linux-*unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" LICENSE.txt
 	install -Dm0644 src/assets/linux/app_icon.png "$pkgdir/usr/share/icons/$pkgname.png"
 	install -Dm0755 "$pkgname.sh" "$pkgdir/usr/bin/$pkgname"
