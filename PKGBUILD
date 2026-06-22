@@ -9,7 +9,7 @@
 
 pkgname=mattermost-desktop
 pkgver=6.2.1
-pkgrel=2
+pkgrel=3
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
@@ -75,7 +75,8 @@ package() {
 	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-*unpacked/resources/app.asar
 	cp -a release/linux-*unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" LICENSE.txt
-	install -Dm0644 src/assets/linux/app_icon.png "$pkgdir/usr/share/icons/$pkgname.png"
+	install -Dm0644 src/assets/appicon_48.png "$pkgdir/usr/share/icons/hicolor/48x48/apps/$pkgname.png"
+	install -Dm0644 src/assets/linux/app_icon.png "$pkgdir/usr/share/icons/hicolor/512x512/apps/$pkgname.png"
 	install -Dm0755 "$pkgname.sh" "$pkgdir/usr/bin/$pkgname"
 	install -Dm0644 -t "$pkgdir/usr/share/applications/" "$srcdir/$pkgname.desktop"
 }
