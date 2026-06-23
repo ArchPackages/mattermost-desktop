@@ -8,8 +8,8 @@
 # Contributor: Matthias Mailänder <matthias@mailaender.name>
 
 pkgname=mattermost-desktop
-pkgver=6.2.1
-pkgrel=3
+pkgver=6.2.2
+pkgrel=1
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
@@ -28,7 +28,7 @@ _archive="${pkgname#*-}-$pkgver"
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
         "$pkgname.sh"
         "$pkgname.desktop")
-sha256sums=('3ca67ef6469e6ed9937e18b06e4d1c5bb944ff7781a6408041b58ba6527d97ff'
+sha256sums=('4a28927eb711c33fc6cd917ad9b644c11a8862c2db0e070744edbcad37bfdf8a'
             '1c2bf48b6397d04a5a536c5c9f4960db53249c838c380f03f808c612b00ba4c6'
             '13df5ad4c7813986403658f5f88d723907db507703942f3facfb37ceaca657ef')
 
