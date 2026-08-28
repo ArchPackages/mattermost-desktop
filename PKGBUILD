@@ -8,31 +8,33 @@
 # Contributor: Matthias Mailänder <matthias@mailaender.name>
 
 pkgname=mattermost-desktop
-pkgver=6.2.2
+pkgver=6.3.0
 pkgrel=1
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
 license=(Apache-2.0)
-_electron=electron41
+_electron=electron43
 depends=($_electron
          libxcrypt-compat)
 makedepends=(git
              jq
              python-setuptools
              moreutils
-             nodejs-lts-jod
+             nodejs-lts-krypton
              node-gyp
              npm)
 _archive="${pkgname#*-}-$pkgver"
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
         "$pkgname.sh"
         "$pkgname.desktop")
-sha256sums=('4a28927eb711c33fc6cd917ad9b644c11a8862c2db0e070744edbcad37bfdf8a'
+sha256sums=('a78d6480538e23fcfd928b2acd63019b607a74f43cb93d97f0ea8c689e5b1fda'
             '1c2bf48b6397d04a5a536c5c9f4960db53249c838c380f03f808c612b00ba4c6'
             '13df5ad4c7813986403658f5f88d723907db507703942f3facfb37ceaca657ef')
 
-_npmargs="--cache '$srcdir/npm-cache' --no-audit --no-fund"
+_npmargs=(--no-audit
+          --no-fund
+          --allow-git=all)
 
 prepare() {
 	cd "$_archive"
@@ -48,9 +50,7 @@ prepare() {
 	local _electronVersion="$(< "/usr/lib/$_electron/version")"
 	jq '	.devDependencies["electron"] = $electronVersion |
 		del(.devDependencies["electron-rebuild"]) |
-		.config.target = $electronVersion |
-		.config.runtime = $electronRuntime' \
-			--arg electronRuntime "$_electron" \
+		del(.config)' \
 			--arg electronVersion "$_electronVersion" \
 			package.json |
 		sponge package.json
@@ -60,13 +60,13 @@ prepare() {
 	npm pkg set desktopName="$pkgname"
 	# Set path for autostart
 	sed -i "/new AutoLaunch({/a\            path: '/usr/bin/mattermost-desktop'," src/main/AutoLauncher.ts
-	npm $_npmargs install
+	npm --cache "$srcdir/npm-cache" "${_npmargs[@]}" install
 }
 
 build() {
 	cd "$_archive"
 	export NODE_ENV=production
-	npm $_npmargs --offline run build-prod
+	npm --cache "$srcdir/npm-cache" "${_npmargs[@]}" --offline run build-prod
 	npx electron-builder --linux dir --publish=never
 }
 
@@ -74,6 +74,7 @@ package() {
 	cd "$_archive"
 	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-*unpacked/resources/app.asar
 	cp -a release/linux-*unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
+	chmod -R a+rX "$pkgdir/usr/lib/$pkgname/app.asar.unpacked"
 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" LICENSE.txt
 	install -Dm0644 src/assets/appicon_48.png "$pkgdir/usr/share/icons/hicolor/48x48/apps/$pkgname.png"
 	install -Dm0644 src/assets/linux/app_icon.png "$pkgdir/usr/share/icons/hicolor/512x512/apps/$pkgname.png"
