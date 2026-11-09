@@ -1,3 +1,4 @@
+# Maintainer: Miroslav Pavleski <miroslav@pavleski.net>
 # Maintainer: Caleb Maclennan <caleb@alerque.com>
 # Maintainer: Bruno Pagani <archange@archlinux.org>
 # Contributor: Raphael Nestler <archlinux@rnstlr.ch>
@@ -8,7 +9,7 @@
 # Contributor: Matthias Mailänder <matthias@mailaender.name>
 
 pkgname=mattermost-desktop
-pkgver=6.3.0
+pkgver=6.3.2
 pkgrel=1
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
@@ -28,7 +29,7 @@ _archive="${pkgname#*-}-$pkgver"
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
         "$pkgname.sh"
         "$pkgname.desktop")
-sha256sums=('a78d6480538e23fcfd928b2acd63019b607a74f43cb93d97f0ea8c689e5b1fda'
+sha256sums=('2e7f184c11457e57efc012ab458329c5c38ab838aea4f56ed7babad1ea65693e'
             '1c2bf48b6397d04a5a536c5c9f4960db53249c838c380f03f808c612b00ba4c6'
             '13df5ad4c7813986403658f5f88d723907db507703942f3facfb37ceaca657ef')
 
@@ -73,7 +74,7 @@ build() {
 package() {
 	cd "$_archive"
 	install -Dm0644 -t "$pkgdir/usr/lib/$pkgname/" release/linux-*unpacked/resources/app.asar
-	cp -a release/linux-*unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
+	cp -a --no-preserve=all release/linux-*unpacked/resources/app.asar.unpacked "$pkgdir/usr/lib/$pkgname/"
 	chmod -R a+rX "$pkgdir/usr/lib/$pkgname/app.asar.unpacked"
 	install -Dm0644 -t "$pkgdir/usr/share/licenses/$pkgname/" LICENSE.txt
 	install -Dm0644 src/assets/appicon_48.png "$pkgdir/usr/share/icons/hicolor/48x48/apps/$pkgname.png"

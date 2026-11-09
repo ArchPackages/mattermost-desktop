@@ -1,6 +1,6 @@
 pkgbase = mattermost-desktop
 	pkgdesc = Mattermost Desktop application
-	pkgver = 6.3.0
+	pkgver = 6.3.2
 	pkgrel = 1
 	url = https://github.com/mattermost/desktop
 	arch = x86_64
@@ -14,10 +14,10 @@ pkgbase = mattermost-desktop
 	makedepends = npm
 	depends = electron43
 	depends = libxcrypt-compat
-	source = mattermost-desktop-6.3.0.tar.gz::https://github.com/mattermost/desktop/archive/v6.3.0.tar.gz
+	source = mattermost-desktop-6.3.2.tar.gz::https://github.com/mattermost/desktop/archive/v6.3.2.tar.gz
 	source = mattermost-desktop.sh
 	source = mattermost-desktop.desktop
-	sha256sums = a78d6480538e23fcfd928b2acd63019b607a74f43cb93d97f0ea8c689e5b1fda
+	sha256sums = 2e7f184c11457e57efc012ab458329c5c38ab838aea4f56ed7babad1ea65693e
 	sha256sums = 1c2bf48b6397d04a5a536c5c9f4960db53249c838c380f03f808c612b00ba4c6
 	sha256sums = 13df5ad4c7813986403658f5f88d723907db507703942f3facfb37ceaca657ef
 
