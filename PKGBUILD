@@ -9,13 +9,18 @@
 # Contributor: Matthias Mailänder <matthias@mailaender.name>
 
 pkgname=mattermost-desktop
-pkgver=6.3.2
+pkgver=6.4.0
 pkgrel=1
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
 license=(Apache-2.0)
-_electron=electron43
+_electron=electron44
+# Mattermost 6.4.0 upstream targets electron45, which is not packaged in Arch
+# yet. Build against electron44 until it lands, then switch _electron and drop
+# _electron_allow_mismatch. Screen sharing in Calls may prompt as a camera or
+# microphone request, and tzdata is 2026d rather than 2026e.
+_electron_allow_mismatch=1
 depends=($_electron
          libxcrypt-compat)
 makedepends=(git
@@ -29,7 +34,7 @@ _archive="${pkgname#*-}-$pkgver"
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
         "$pkgname.sh"
         "$pkgname.desktop")
-sha256sums=('2e7f184c11457e57efc012ab458329c5c38ab838aea4f56ed7babad1ea65693e'
+sha256sums=('3fcdebde6c6f79e3ab86495c45252a08f599b4e20c7575b66bf584323b0a7418'
             '1c2bf48b6397d04a5a536c5c9f4960db53249c838c380f03f808c612b00ba4c6'
             '13df5ad4c7813986403658f5f88d723907db507703942f3facfb37ceaca657ef')
 
@@ -44,8 +49,12 @@ prepare() {
 	# Make sure we are using the same major version of Electron as upstream
 	local _origElectron="electron$(jq -r '.devDependencies.electron | split(".")[0]' package.json)"
 	if [ "$_electron" != "$_origElectron" ]; then
-		echo "Electron version mismatch: $_electron vs $_origElectron"
-		exit 1
+		if [ "${_electron_allow_mismatch:-0}" = 1 ]; then
+			warning "Electron version mismatch: $_electron vs $_origElectron (allowed by _electron_allow_mismatch)"
+		else
+			error "Electron version mismatch: $_electron vs $_origElectron"
+			exit 1
+		fi
 	fi
 	# Substitute our exact distro packaged version of Electron
 	local _electronVersion="$(< "/usr/lib/$_electron/version")"
@@ -61,7 +70,10 @@ prepare() {
 	npm pkg set desktopName="$pkgname"
 	# Set path for autostart
 	sed -i "/new AutoLaunch({/a\            path: '/usr/bin/mattermost-desktop'," src/main/AutoLauncher.ts
-	npm --cache "$srcdir/npm-cache" "${_npmargs[@]}" install
+	# 6.4.0's postinstall runs node_modules/electron/install.js, which would
+	# download a bundled Electron this package never uses. The distro package
+	# provides the runtime, so skip that download.
+	ELECTRON_SKIP_BINARY_DOWNLOAD=1 npm --cache "$srcdir/npm-cache" "${_npmargs[@]}" install
 }
 
 build() {

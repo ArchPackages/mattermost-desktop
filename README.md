@@ -1,6 +1,6 @@
 # mattermost-desktop — Arch Linux package
 
-Packaging for [Mattermost Desktop](https://github.com/mattermost/desktop) 6.3.2,
+Packaging for [Mattermost Desktop](https://github.com/mattermost/desktop) 6.4.0,
 the Electron desktop client for Mattermost.
 
 ## Fork provenance
