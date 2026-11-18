@@ -10,17 +10,12 @@
 
 pkgname=mattermost-desktop
 pkgver=6.4.0
-pkgrel=1
+pkgrel=2
 pkgdesc='Mattermost Desktop application'
 arch=(x86_64)
 url="https://github.com/${pkgname/-//}"
 license=(Apache-2.0)
-_electron=electron44
-# Mattermost 6.4.0 upstream targets electron45, which is not packaged in Arch
-# yet. Build against electron44 until it lands, then switch _electron and drop
-# _electron_allow_mismatch. Screen sharing in Calls may prompt as a camera or
-# microphone request, and tzdata is 2026d rather than 2026e.
-_electron_allow_mismatch=1
+_electron=electron45
 depends=($_electron
          libxcrypt-compat)
 makedepends=(git
@@ -49,12 +44,8 @@ prepare() {
 	# Make sure we are using the same major version of Electron as upstream
 	local _origElectron="electron$(jq -r '.devDependencies.electron | split(".")[0]' package.json)"
 	if [ "$_electron" != "$_origElectron" ]; then
-		if [ "${_electron_allow_mismatch:-0}" = 1 ]; then
-			warning "Electron version mismatch: $_electron vs $_origElectron (allowed by _electron_allow_mismatch)"
-		else
-			error "Electron version mismatch: $_electron vs $_origElectron"
-			exit 1
-		fi
+		echo "Electron version mismatch: $_electron vs $_origElectron"
+		exit 1
 	fi
 	# Substitute our exact distro packaged version of Electron
 	local _electronVersion="$(< "/usr/lib/$_electron/version")"

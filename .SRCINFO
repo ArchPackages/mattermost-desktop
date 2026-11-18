@@ -1,7 +1,7 @@
 pkgbase = mattermost-desktop
 	pkgdesc = Mattermost Desktop application
 	pkgver = 6.4.0
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/mattermost/desktop
 	arch = x86_64
 	license = Apache-2.0
@@ -12,7 +12,7 @@ pkgbase = mattermost-desktop
 	makedepends = nodejs-lts-krypton
 	makedepends = node-gyp
 	makedepends = npm
-	depends = electron44
+	depends = electron45
 	depends = libxcrypt-compat
 	source = mattermost-desktop-6.4.0.tar.gz::https://github.com/mattermost/desktop/archive/v6.4.0.tar.gz
 	source = mattermost-desktop.sh
